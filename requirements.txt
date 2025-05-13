@@ -1,5 +1,0 @@
-pandas
-ipykernel
-matplotlib
-taipy
-plotly
