@@ -1,0 +1,1 @@
+studerande = "https://www.scb.se/hitta-statistik/statistik-efter-amne/utbildning-samt-forskning-inom-hogskolan/eftergymnasial-yrkesutbildning/yrkeshogskolan/pong/tabell-och-diagram/studerande-och-examinerade/nyckeltal-studerande-och-examinerade-inom-yrkeshogskolan-2007-2024/"
