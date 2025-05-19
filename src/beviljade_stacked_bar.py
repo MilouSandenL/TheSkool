@@ -20,7 +20,7 @@ fig.add_trace(go.Bar(
     y=df_grouped["Utbildningsområde"],
     x=df_grouped["Beviljade platser totalt"],
     name="Beviljade",
-    marker_color='green',
+    marker_color='#66BB6A',
     orientation='h'
 ))
 
@@ -28,7 +28,7 @@ fig.add_trace(go.Bar(
     y=df_grouped["Utbildningsområde"],
     x=df_grouped["Avslag"],
     name="Avslag",
-    marker_color='red',
+    marker_color='#EF5350',
     orientation='h'
 ))
 
