@@ -1,83 +1,43 @@
-# from taipy.gui import Gui
-# import taipy.gui.builder as tgb
-
-# from choroplethmap import run_map
-# from bar_chart import (
-#     page as bar_chart_page,
-#     line_chart,
-#     chart_title,
-#     selected_year,
-#     available_years,
-#     df_long,
-#     update_chart,
-# )
-
-# # Karta
-# map_figure = run_map()
-
-# with tgb.Page() as map_page:
-#     with tgb.part(class_name="container card"):
-#         tgb.text("# Karta: Beviljade YH-utbildningar", mode="md")
-#         tgb.chart(figure=map_figure)
-
-# # Sidor
-# pages = {
-#     "/": map_page,
-#     "Studerande": bar_chart_page,
-# }
-
-# # Samla state-variabler i en dict
-# data = {
-#     "line_chart": line_chart,
-#     "chart_title": chart_title,
-#     "selected_year": selected_year,
-#     "available_years": available_years,
-#     "df_long": df_long,
-#     "update_chart": update_chart,
-# }
-
-# # Kör GUI
-# Gui(pages=pages).run(dark_mode=False, use_reloader=True, data=data)
-
-
-from taipy.gui import Gui
+import choroplethmap
+import bar_chart
 import taipy.gui.builder as tgb
+from taipy.gui import Gui
 
-from choroplethmap import run_map
-from bar_chart import (
-    page as bar_chart_page,
-    line_chart,
-    chart_title,
-    selected_year,
-    available_years,
-    df_long,
-    update_chart,
-)
+# --- Initiera figurer och data ---
+karta_fig = choroplethmap.run_map()
+df_long = bar_chart.df_long
+available_years = bar_chart.available_years
+selected_year = bar_chart.selected_year
+line_chart = bar_chart.create_horizontal_bar_chart(selected_year)
+chart_title = f"Antal studerande per utbildningsområde för år {selected_year}"
 
-# Skapa sida för kartan
-map_figure = run_map()
+# --- Callback-funktion ---
+def update_chart(state):
+    state.line_chart = bar_chart.create_horizontal_bar_chart(state.selected_year)
+    state.chart_title = f"Antal studerande per utbildningsområde för år {state.selected_year}"
 
-with tgb.Page() as map_page:
-    tgb.navbar()
-    with tgb.part():
-        tgb.text("# Karta")
-        tgb.chart(figure=map_figure)
+# --- GUI-layout ---
+with tgb.Page() as page:
+    with tgb.part(class_name="card"):
+        tgb.text("# Visualisering av YH-data", mode="md")
 
-# Sidor
-pages = {
-    "/": map_page,
-    "Studerande": bar_chart_page,
-}
+    with tgb.part(class_name="card"):
+        tgb.text("## Karta: Beviljade utbildningar per län", mode="md")
+        tgb.chart(figure="{karta_fig}")
 
-# Samla state-variabler i en dict
-data = {
-    "line_chart": line_chart,
-    "chart_title": chart_title,
-    "selected_year": selected_year,
-    "available_years": available_years,
-    "df_long": df_long,
-    "update_chart": update_chart,
-}
+    with tgb.part(class_name="card"):
+        tgb.text("## {chart_title}", mode="md")
+        tgb.chart(figure="{line_chart}")
 
-# Starta Gui med pages och data
-Gui(pages=pages).run(dark_mode=False, use_reloader=True, data=data)
+    with tgb.part(class_name="card"):
+        tgb.text("## Välj år", mode="md")
+        tgb.selector(value="{selected_year}", lov=available_years, dropdown=True)
+        tgb.button("Uppdatera graf", on_action=update_chart, class_name="plain")
+
+    with tgb.part(class_name="card"):
+        tgb.text("## Rådata", mode="md")
+        tgb.table("{df_long}", rows_per_page=20)
+
+# --- Starta app ---
+if __name__ == "__main__":
+    Gui(page).run(dark_mode=False, use_reloader=True)
