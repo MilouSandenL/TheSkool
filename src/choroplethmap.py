@@ -90,8 +90,5 @@ def run_map():
         ),
     )
 
-   
-    return fig
 
-if __name__ == "__main__":
-    run_map()
+fig.show()

@@ -178,14 +178,55 @@ def create_bar_chart_by_area(anordnare):
 
     return fig
 
+def create_line_chart_by_area(anordnare):
+    df = data[
+        data["Utbildningsanordnare administrativ enhet"] == anordnare
+    ].dropna(subset=["Utbildningsområde", "Utbildningsnamn"])
+
+    grouped = (
+        df.groupby(["År", "Utbildningsområde"])
+        .size()
+        .reset_index(name="Antal")
+    )
+
+    grouped["Antal"] = grouped["Antal"].astype(int)
+
+    fig = px.line(
+        grouped,
+        x="År",
+        y="Antal",
+        color="Utbildningsområde",
+        markers=True,
+        title=f"Ansökta utbildningar per område över tid ({anordnare})",
+    )
+
+    for trace in fig.data:
+        område = trace.name
+        trace.hovertemplate = (
+            f"Område: {område}<br>Antal: %{{y}}st<br>År: %{{x}}<extra></extra>"
+        )
+
+    fig.update_layout(
+        xaxis=dict(title="År", tickmode="linear", dtick=1, showgrid=False),
+        yaxis=dict(title="Antal ansökningar", tickformat="d", showgrid=False, range=[0, None]),
+        plot_bgcolor="#F5F5F5",
+        paper_bgcolor="#F5F5F5",
+        legend_title_text="Utbildningsområde",
+        hovermode="x unified"
+    )
+
+    return fig
+
 chart_title = f"Ansökningar för {selected_anordnare}"
 bar_chart = create_bar_chart(selected_anordnare)
-area_chart = create_bar_chart_by_area(selected_anordnare)
+bar_chart_by_area = create_bar_chart_by_area(selected_anordnare)
+line_chart_by_area = create_line_chart_by_area(selected_anordnare)
 
 def update_chart(state):
     state.bar_chart = create_bar_chart(state.selected_anordnare)
-    state.area_chart = create_bar_chart_by_area(state.selected_anordnare)
+    state.bar_chart_by_area = create_bar_chart_by_area(state.selected_anordnare)
     state.chart_title = f"Ansökningar för {state.selected_anordnare}"
+    state.line_chart_by_area = create_line_chart_by_area(state.selected_anordnare)
 
 with tgb.Page() as anordnare_page:
     with tgb.part(class_name="container card stack-large", style={"margin-bottom": "20px"}):
@@ -196,7 +237,8 @@ with tgb.Page() as anordnare_page:
             with tgb.part(class_name="card"):
                 tgb.text("## {chart_title}", mode="md")
                 tgb.chart(figure="{bar_chart}")
-                tgb.chart(figure="{area_chart}")
+                tgb.chart(figure="{bar_chart_by_area}")
+                tgb.chart(figure="{line_chart_by_area}")
 
             with tgb.part(class_name="card"):
                 tgb.text("## Välj utbildningsanordnare", mode="md")

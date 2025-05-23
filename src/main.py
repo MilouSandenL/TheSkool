@@ -18,6 +18,7 @@ def update_chart(state):
 
 # --- GUI-layout ---
 with tgb.Page() as page:
+    
     with tgb.part(class_name="card"):
         tgb.text("# Visualisering av YH-data", mode="md")
 
@@ -34,10 +35,10 @@ with tgb.Page() as page:
         tgb.selector(value="{selected_year}", lov=available_years, dropdown=True)
         tgb.button("Uppdatera graf", on_action=update_chart, class_name="plain")
 
-    with tgb.part(class_name="card"):
-        tgb.text("## Rådata", mode="md")
-        tgb.table("{df_long}", rows_per_page=20)
+    # with tgb.part(class_name="card"):
+    #     tgb.text("## Rådata", mode="md")
+    #     tgb.table("{df_long}", rows_per_page=20)
 
 # --- Starta app ---
 if __name__ == "__main__":
-    Gui(page).run(dark_mode=False, use_reloader=True)
+    Gui(page).run(dark_mode=False)
