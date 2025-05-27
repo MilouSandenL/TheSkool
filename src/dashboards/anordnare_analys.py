@@ -67,7 +67,7 @@ def update_data_table(state):
         print("❌ Fel vid filtrering:", e)
         state.filtered_data = pd.DataFrame()
 
-def create_bar_chart(anordnare):
+def create_bar_chart_anordnare(anordnare):
     df = data[data["Utbildningsanordnare administrativ enhet"] == anordnare]
     total = df.groupby("År")["Utbildningsnamn"].count().reset_index(name="Totalt")
     beviljad = (
@@ -129,7 +129,7 @@ def create_bar_chart(anordnare):
     )
     return fig
 
-def create_bar_chart_by_area(anordnare):
+def create_bar_chart_by_area_anordnare(anordnare):
     df = data[
         (data["Utbildningsanordnare administrativ enhet"] == anordnare)
         & (data["Beslut"] == "Beviljad")
@@ -217,46 +217,13 @@ def create_line_chart_by_area(anordnare):
 
     return fig
 
-chart_title = f"Ansökningar för {selected_anordnare}"
-bar_chart = create_bar_chart(selected_anordnare)
-bar_chart_by_area = create_bar_chart_by_area(selected_anordnare)
-line_chart_by_area = create_line_chart_by_area(selected_anordnare)
+chart_title_anordnare = f"Ansökningar för {selected_anordnare}"
+bar_chart_anordnare = create_bar_chart_anordnare(selected_anordnare)
+bar_chart_by_area_anordnare = create_bar_chart_by_area_anordnare(selected_anordnare)
+line_chart_by_area_anordnare = create_line_chart_by_area(selected_anordnare)
 
-def update_chart(state):
-    state.bar_chart = create_bar_chart(state.selected_anordnare)
-    state.bar_chart_by_area = create_bar_chart_by_area(state.selected_anordnare)
-    state.chart_title = f"Ansökningar för {state.selected_anordnare}"
+def update_chart_anordnare(state):
+    state.bar_chart_anordnare = create_bar_chart_anordnare(state.selected_anordnare)
+    state.bar_chart_by_area_anordnare = create_bar_chart_by_area_anordnare(state.selected_anordnare)
+    state.chart_title_anordnare_anordnare = f"Ansökningar för {state.selected_anordnare}"
     state.line_chart_by_area = create_line_chart_by_area(state.selected_anordnare)
-
-with tgb.Page() as anordnare_page:
-    with tgb.part(class_name="container card stack-large", style={"margin-bottom": "20px"}):
-        with tgb.part(class_name="card"):
-            tgb.text("# Utbildningsanordnare: Ansökningar", mode="md")
-
-        with tgb.layout(columns="2 1"):
-            with tgb.part(class_name="card"):
-                tgb.text("## {chart_title}", mode="md")
-                tgb.chart(figure="{bar_chart}")
-                tgb.chart(figure="{bar_chart_by_area}")
-                tgb.chart(figure="{line_chart_by_area}")
-
-            with tgb.part(class_name="card"):
-                tgb.text("## Välj utbildningsanordnare", mode="md")
-                tgb.selector(
-                    value="{selected_anordnare}", lov=anordnare_lov, dropdown=True
-                )
-                tgb.button("Uppdatera graf", on_action=update_chart, class_name="plain")
-
-        with tgb.part(class_name="card"):
-            tgb.text("## Rådata", mode="md")
-            tgb.selector(
-                value="{selected_data_year}",
-                lov=available_years,
-                dropdown=True,
-                on_change=update_data_table,
-            )
-            tgb.table("{filtered_data}", rows_per_page=20)
-
-Gui(anordnare_page).run(
-    title="Dashboard - Anordnare", dark_mode=False, use_reloader=True, port=8080
-)

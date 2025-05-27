@@ -6,6 +6,8 @@ from taipy.gui import Gui
 from src.dashboards import education_location
 from src.dashboards import students_by_field
 from src.dashboards import approved_programs
+from src.dashboards import anordnare_analys
+from src.dashboards.anordnare_analys import update_chart_anordnare
 from src.dashboards.trends import create_trend_chart
 from src.dashboards.stadsbidrag_dashboard import utbildningar, val_utbildning, utan_moms, med_moms, visa_bidrag
 from src.dashboards.course_chart import available_courses, selected_course, bar_chart, update_chart
@@ -72,19 +74,27 @@ def update_students_chart(state):
 karta_fig = education_location.run_map(selected_year_shared)
 stacked_fig = approved_programs.create_stacked_bar_chart(selected_year_shared)
 
+# --- anordnare_analys ---
+selected_anordnare = anordnare_analys.selected_anordnare
+anordnare_lov = anordnare_analys.anordnare_lov
+chart_title_anordnare = anordnare_analys.chart_title_anordnare
+bar_chart_anordnare = anordnare_analys.bar_chart_anordnare
+bar_chart_by_area_anordnare = anordnare_analys.bar_chart_by_area_anordnare
+line_chart_by_area_anordnare = anordnare_analys.line_chart_by_area_anordnare
+
 # --- GUI-layout ---
-with tgb.Page() as Home:
+with tgb.Page(name="Startsida") as Home:
     with tgb.layout(columns="1fr 8fr 1fr"):
-        with tgb.part():  # Vänster marginal
+        with tgb.part():
             pass
 
-        with tgb.part():  # Centralt innehåll
+        with tgb.part():
             tgb.navbar()
             tgb.text("# The Skool - YH Dashboard", mode="md")
             tgb.text("---", mode="md")
 
 
-            # --- MAP och BEVILJADE PROGRAM ---
+            # --- KARTA och BEVILJADE PROGRAM ---
             with tgb.part(class_name="card"):
                 with tgb.layout(columns="3 1"):
                     with tgb.part():
@@ -111,17 +121,17 @@ with tgb.Page() as Home:
                         tgb.text("### Välj år (2005-2024)", mode="md")
                         tgb.selector(value="{selected_year}", lov=available_years, dropdown=True, on_change=update_students_chart)
 
-        with tgb.part():  # Höger marginal
+        with tgb.part():
             pass
 
 
 # --- KPIER & TRENDER ---
-with tgb.Page() as Kpier_Trender:
+with tgb.Page(name="KPI & Trender") as Kpier_Trender:
     with tgb.layout(columns="1fr 8fr 1fr"):
-        with tgb.part():  # Vänster marginal
+        with tgb.part():
             pass
 
-        with tgb.part():  # Centralt innehåll
+        with tgb.part():
             tgb.navbar()
             with tgb.part(class_name="card"):
                 tgb.text("## 🎓 YH-ansökningsomgång 2024", mode="md")
@@ -138,16 +148,16 @@ with tgb.Page() as Kpier_Trender:
                     tgb.text("---", mode="md")
                     tgb.chart(figure="{trend_chart}")
 
-        with tgb.part():  # Höger marginal
+        with tgb.part():
             pass
 
 # --- STATSBIDRAG ---
-with tgb.Page() as Bidrag:
+with tgb.Page(name="Statsbidrag") as Bidrag:
     with tgb.layout(columns="1fr 8fr 1fr"):
-        with tgb.part():  # Vänster marginal
+        with tgb.part():
             pass
 
-        with tgb.part():  # Centralt innehåll
+        with tgb.part():
             tgb.navbar()
             with tgb.part(class_name="card"):
                 tgb.text("# 📊 Statsbidrag och schablonnivåer per utbildning", mode="md")
@@ -165,29 +175,67 @@ with tgb.Page() as Bidrag:
 
                 tgb.text("Schablonerna ovan gäller utbildningsomgångar med startdatum fr.o.m. 1 juli 2024.", mode="md")
 
-        with tgb.part():  # Höger marginal
+        with tgb.part():
             pass
 
 # --- KURSER ---
 with tgb.Page(name="Kurser") as Courses:
     with tgb.layout(columns="1fr 8fr 1fr"):
-        with tgb.part():  # Vänster marginal
+        with tgb.part():
             pass
 
-        with tgb.part():  # Centralt innehåll
+        with tgb.part():
             tgb.navbar()
             with tgb.part(class_name="card"):
                 tgb.text("# 📚 Kurser och utbildningar", mode="md")
-                tgb.text("### Ansökta och beviljade platser 2020-2025", mode="md")
-                with tgb.layout(columns="2 1"):
-                    with tgb.part(class_name="card"):
+                tgb.text("---", mode="md")
+                tgb.text("### 📈 Ansökta och beviljade platser 2020–2025", mode="md")
+
+                with tgb.layout(columns="3 1"):
+                    with tgb.part():
                         tgb.chart(figure="{bar_chart}")
-                    with tgb.part(class_name="card"):
+                    with tgb.part():
+                        tgb.text("### 🔎 Välj kurs", mode="md")
                         tgb.selector(value="{selected_course}", lov=available_courses, dropdown=True)
                         tgb.button("UPPDATERA", on_action=update_chart)
 
-        with tgb.part():  # Höger marginal
+        with tgb.part():
             pass
+
+# --- ANORDNARANALYS ---
+with tgb.Page(name="Utbildningsanordnare") as Anordnaranalys:
+    with tgb.layout(columns="1fr 8fr 1fr"):
+        with tgb.part(): pass
+
+        with tgb.part():
+            tgb.navbar()
+            with tgb.part(class_name="card"):
+                tgb.text("# 🧑‍🏫 Analys per Utbildningsanordnare", mode="md")
+                tgb.text("---", mode="md")
+
+                with tgb.layout(columns="3 1"):
+                    with tgb.part():
+                        tgb.text("## 📊 Beviljade och ej beviljade utbildningar per år", mode="md")
+                        tgb.chart(figure="{bar_chart_anordnare}")
+                        tgb.text("---", mode="md")
+
+                        tgb.text("## 📚 Beviljade utbildningar per utbildningsområde", mode="md")
+                        tgb.chart(figure="{bar_chart_by_area_anordnare}")
+                        tgb.text("---", mode="md")
+
+                        tgb.text("## 📈 Ansökta utbildningar per område över tid", mode="md")
+                        tgb.chart(figure="{line_chart_by_area_anordnare}")
+
+                    with tgb.part():
+                        tgb.text("### 🔎 Välj utbildningsanordnare", mode="md")
+                        tgb.selector(
+                            value="{selected_anordnare}",
+                            lov="{anordnare_lov}",
+                            dropdown=True,
+                            on_change=anordnare_analys.update_chart_anordnare
+                        )
+
+        with tgb.part(): pass
 
 # --- Initiera initial state ---
 selected_course = available_courses[0]
@@ -195,9 +243,10 @@ selected_course = available_courses[0]
 # --- Pages ---            
 pages = {
     "Startsida": Home,
-    "KPIer_Trender": Kpier_Trender,
+    "KPI-Trender": Kpier_Trender,
     "Statsbidrag": Bidrag,
-    "Kurser": Courses
+    "Kurser": Courses,
+    "Utbildningsanordnare": Anordnaranalys
 }
 
 # --- Start GUI ---
@@ -210,7 +259,14 @@ if __name__ == "__main__":
         med_moms=med_moms,
         available_courses=available_courses,
         selected_course=selected_course,
-        bar_chart=None,  
+        selected_anordnare=selected_anordnare,
+        anordnare_lov=anordnare_lov,
+        chart_title_anordnare=chart_title_anordnare,
+        bar_chart_anordnare=bar_chart_anordnare,
+        bar_chart_by_area_anordnare=bar_chart_by_area_anordnare,
+        line_chart_by_area_anordnare=line_chart_by_area_anordnare,
+        update_chart_anordnare=update_chart_anordnare,
+        bar_chart=None,
         on_action=visa_bidrag,
         port=8080
     )
