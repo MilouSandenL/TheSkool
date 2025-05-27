@@ -59,7 +59,7 @@ def update_shared_year(state):
     state.stacked_fig = approved_programs.create_stacked_bar_chart(year)
     state.karta_fig = education_location.run_map(year)
 
-# --- STACKED BAR (students_by_field) ---
+# --- students_by_field ---
 df_long = students_by_field.df_long
 available_years = students_by_field.available_years
 selected_year = students_by_field.selected_year
@@ -70,7 +70,7 @@ def update_students_chart(state):
     state.line_chart = students_by_field.create_horizontal_bar_chart(state.selected_year)
     state.chart_title = f"🎓 Antal studerande per utbildningsområde för år {state.selected_year}"
 
-# --- Första kartan och diagrammet vid start ---
+# --- Initial Karta och Diagram ---
 karta_fig = education_location.run_map(selected_year_shared)
 stacked_fig = approved_programs.create_stacked_bar_chart(selected_year_shared)
 
@@ -89,30 +89,65 @@ with tgb.Page(name="Startsida") as Home:
             pass
 
         with tgb.part():
-            tgb.navbar()
             tgb.text("# The Skool - YH Dashboard", mode="md")
-            tgb.text("---", mode="md")
+            tgb.navbar()
 
+            with tgb.part(class_name="card"):
+                tgb.text("## 🎓 Nyckeltal för YH-ansökningsomgång 2024", mode="md")
+                tgb.text(
+                    "Här visas nyckelindikatorer för beviljade och sökta YH-utbildningar under ansökningsomgången 2024.  \n"
+                    "Statistiken ger en snabb överblick över beviljandegrad, antal utbildningar och platser samt studieformer.",
+                    mode="md",
+                )
+                tgb.text("📊 **Beviljandegrad:** {beviljandegrad}%    ✅ **Beviljade utbildningar:** {beviljade_utbildningar}    📝 **Sökta utbildningar:** {sökta_utbildningar}", mode="md")
+                tgb.text("🎯 **Beviljade platser:** {beviljade_platser}    📌 **Sökta platser:** {sökta_platser}  🏫 **Bundna utbildningar:** {sökta_bundna}    🌐 **Distansutbildningar:** {sökta_distans}", mode="md")
 
-            # --- KARTA och BEVILJADE PROGRAM ---
+            # --- STATSBIDRAG ---
+            with tgb.part(class_name="card"):
+                tgb.text("# 📊 Statsbidrag och schablonnivåer per utbildningsområde", mode="md")
+                tgb.text(
+                    "Statsbidraget utgår från schabloner där bidraget bestäms per studerandeplats i heltidsutbildning som omfattar 40 veckor och 200 yrkeshögskolepoäng (årsplats). - MYH.se",
+                    mode="md",
+                )
+                tgb.selector(value="{val_utbildning}", lov="{utbildningar}", label="🎓 Välj utbildningområde:", dropdown=True)
+                tgb.button("Visa bidrag", on_action=visa_bidrag)
+
+                with tgb.part(render="{utan_moms != ''}"):
+                    tgb.text("💰 Utan momskompensation: {utan_moms}")
+                    tgb.text("💰 Med momskompensation: {med_moms}")
+
+                tgb.text("Schablonerna ovan gäller utbildningsomgångar med startdatum fr.o.m. 1 juli 2024.", mode="md")
+        
+            with tgb.part(style="margin-top: 160px;"):
+                tgb.chart(figure="{trend_chart}")
+
+        with tgb.part(): pass
+
+# --- Program, Studenter & Kurser ---
+with tgb.Page(name="Utbildningsstatistik") as Utbildningsstatistik:
+    with tgb.layout(columns="1fr 8fr 1fr"):
+        with tgb.part(): pass
+
+        with tgb.part():
+            tgb.text("# The Skool - YH Dashboard", mode="md")
+            tgb.navbar()
+            
+            # --- KARTA & BEVILJADE PROGRAM ---
             with tgb.part(class_name="card"):
                 with tgb.layout(columns="3 1"):
                     with tgb.part():
                         tgb.text("## 🗺️ Beviljade utbildningar per län för år {selected_year_shared}", mode="md")
                         tgb.chart(figure="{karta_fig}")
+                        tgb.text("---", mode="md")
                         tgb.text("## 📈 Beviljade och avslagna program per utbildningsområde för år {selected_year_shared}", mode="md")
                         tgb.chart(figure="{stacked_fig}")
-
                     with tgb.part():
                         tgb.text("### Välj år (2020-2024)", mode="md")
                         tgb.selector(value="{selected_year_shared}", lov=available_years_shared, dropdown=True, on_change=update_shared_year)
-                        
-
 
             # --- STUDENTER PER UTBILDNINGSOMRÅDE ---
             with tgb.part(class_name="card"):
                 tgb.text("---", mode="md")
-
                 tgb.text("## {chart_title}", mode="md")
                 with tgb.layout(columns="3 1"):
                     with tgb.part():
@@ -121,86 +156,18 @@ with tgb.Page(name="Startsida") as Home:
                         tgb.text("### Välj år (2005-2024)", mode="md")
                         tgb.selector(value="{selected_year}", lov=available_years, dropdown=True, on_change=update_students_chart)
 
-        with tgb.part():
-            pass
-
-
-# --- KPIER & TRENDER ---
-with tgb.Page(name="KPI & Trender") as Kpier_Trender:
-    with tgb.layout(columns="1fr 8fr 1fr"):
-        with tgb.part():
-            pass
-
-        with tgb.part():
-            tgb.navbar()
+            # --- KURSER ---
             with tgb.part(class_name="card"):
-                tgb.text("## 🎓 YH-ansökningsomgång 2024", mode="md")
-                tgb.text(
-                    "Här visas nyckelindikatorer för beviljade och sökta YH-utbildningar under ansökningsomgången 2024.  \n"
-                    "Statistiken ger en snabb överblick över beviljandegrad, antal utbildningar och platser samt studieformer.",
-                    mode="md",
-                )
-
-                tgb.text("📊 **Beviljandegrad:** {beviljandegrad}%  ✅ **Beviljade utbildningar:** {beviljade_utbildningar}  📝 **Sökta utbildningar:** {sökta_utbildningar}", mode="md")
-                tgb.text("🎯 **Beviljade platser:** {beviljade_platser}  📌 **Sökta platser:** {sökta_platser}  🏫 **Bundna utbildningar:** {sökta_bundna}  🌐 **Distansutbildningar:** {sökta_distans}", mode="md")
-
-                with tgb.part(style="margin-top: 160px;"):
-                    tgb.text("---", mode="md")
-                    tgb.chart(figure="{trend_chart}")
-
-        with tgb.part():
-            pass
-
-# --- STATSBIDRAG ---
-with tgb.Page(name="Statsbidrag") as Bidrag:
-    with tgb.layout(columns="1fr 8fr 1fr"):
-        with tgb.part():
-            pass
-
-        with tgb.part():
-            tgb.navbar()
-            with tgb.part(class_name="card"):
-                tgb.text("# 📊 Statsbidrag och schablonnivåer per utbildning", mode="md")
-                tgb.text(
-                    "Statsbidraget utgår från schabloner där bidraget bestäms per studerandeplats i heltidsutbildning som omfattar 40 veckor och 200 yrkeshögskolepoäng (årsplats). - MYH.se",
-                    mode="md",
-                )
                 tgb.text("---", mode="md")
-                tgb.selector(value="{val_utbildning}", lov="{utbildningar}", label="🎓 Välj utbildning:", dropdown=True)
-                tgb.button("Visa bidrag", on_action=visa_bidrag)
-
-                with tgb.part(render="{utan_moms != ''}"):
-                    tgb.text("💰 Utan momskompensation: {utan_moms}")
-                    tgb.text("💰 Med momskompensation: {med_moms}")
-
-                tgb.text("Schablonerna ovan gäller utbildningsomgångar med startdatum fr.o.m. 1 juli 2024.", mode="md")
-
-        with tgb.part():
-            pass
-
-# --- KURSER ---
-with tgb.Page(name="Kurser") as Courses:
-    with tgb.layout(columns="1fr 8fr 1fr"):
-        with tgb.part():
-            pass
-
-        with tgb.part():
-            tgb.navbar()
-            with tgb.part(class_name="card"):
-                tgb.text("# 📚 Kurser och utbildningar", mode="md")
-                tgb.text("---", mode="md")
-                tgb.text("### 📈 Ansökta och beviljade platser 2020–2025", mode="md")
-
+                tgb.text("## 📈 Beviljade och avslagna kurser per utbildningsområde (2020-2025)", mode="md")
                 with tgb.layout(columns="3 1"):
                     with tgb.part():
                         tgb.chart(figure="{bar_chart}")
                     with tgb.part():
                         tgb.text("### 🔎 Välj kurs", mode="md")
-                        tgb.selector(value="{selected_course}", lov=available_courses, dropdown=True)
-                        tgb.button("UPPDATERA", on_action=update_chart)
+                        tgb.selector(value="{selected_course}", lov=available_courses, dropdown=True, on_change=update_chart)
 
-        with tgb.part():
-            pass
+        with tgb.part(): pass
 
 # --- ANORDNARANALYS ---
 with tgb.Page(name="Utbildningsanordnare") as Anordnaranalys:
@@ -208,10 +175,10 @@ with tgb.Page(name="Utbildningsanordnare") as Anordnaranalys:
         with tgb.part(): pass
 
         with tgb.part():
+            tgb.text("# The Skool - YH Dashboard", mode="md")
             tgb.navbar()
             with tgb.part(class_name="card"):
                 tgb.text("# 🧑‍🏫 Analys per Utbildningsanordnare", mode="md")
-                tgb.text("---", mode="md")
 
                 with tgb.layout(columns="3 1"):
                     with tgb.part():
@@ -243,9 +210,7 @@ selected_course = available_courses[0]
 # --- Pages ---            
 pages = {
     "Startsida": Home,
-    "KPI-Trender": Kpier_Trender,
-    "Statsbidrag": Bidrag,
-    "Kurser": Courses,
+    "Utbildningsstatistik": Utbildningsstatistik,
     "Utbildningsanordnare": Anordnaranalys
 }
 
