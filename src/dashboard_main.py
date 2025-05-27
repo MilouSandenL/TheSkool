@@ -190,4 +190,5 @@ if __name__ == "__main__":
         selected_course=selected_course,
         bar_chart=None,  
         on_action=visa_bidrag,
+        port=8080
     )
