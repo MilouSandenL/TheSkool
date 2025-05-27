@@ -82,6 +82,8 @@ with tgb.Page() as Home:
 
         with tgb.part():  # Huvudinnehåll
             tgb.text("# The Skool - YH Dashboard", mode="md")
+            tgb.text("---", mode="md")
+
 
             # --- MAP och BEVILJADE PROGRAM ---
             with tgb.part(class_name="card"):
@@ -91,12 +93,17 @@ with tgb.Page() as Home:
                         tgb.chart(figure="{karta_fig}")
                         tgb.text("## 📈 Beviljade och avslagna program per utbildningsområde för år {selected_year_shared}", mode="md")
                         tgb.chart(figure="{stacked_fig}")
+
                     with tgb.part():
                         tgb.text("### Välj år (2020-2024)", mode="md")
                         tgb.selector(value="{selected_year_shared}", lov=available_years_shared, dropdown=True, on_change=update_shared_year)
+                        
+
 
             # --- STUDENTER PER UTBILDNINGSOMRÅDE ---
             with tgb.part(class_name="card"):
+                tgb.text("---", mode="md")
+
                 tgb.text("## {chart_title}", mode="md")
                 with tgb.layout(columns="3 1"):
                     with tgb.part():
@@ -119,10 +126,15 @@ with tgb.Page() as Kpier_Trender:
             "Statistiken ger en snabb överblick över beviljandegrad, antal utbildningar och platser samt studieformer.",
             mode="md",
         )
-        tgb.text("---", mode="md")
+        
         tgb.text("📊 **Beviljandegrad:** {beviljandegrad}%  ✅ **Beviljade utbildningar:** {beviljade_utbildningar}  📝 **Sökta utbildningar:** {sökta_utbildningar}", mode="md")
         tgb.text("🎯 **Beviljade platser:** {beviljade_platser}  📌 **Sökta platser:** {sökta_platser}  🏫 **Bundna utbildningar:** {sökta_bundna}  🌐 **Distansutbildningar:** {sökta_distans}", mode="md")
-        tgb.chart(figure="{trend_chart}")
+        with tgb.part(style="margin-top: 160px;"):
+            tgb.text("---", mode="md")
+
+
+            tgb.chart(figure="{trend_chart}")
+
 
 with tgb.Page() as Bidrag:
     tgb.navbar()

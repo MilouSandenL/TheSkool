@@ -10,8 +10,11 @@ def create_trend_chart():
     valda_inriktningar = ['Data/It', 'Teknik och tillverkning', 'Ekonomi, administration och försäljning']
     df_valda = df_melt[df_melt['Inriktning'].isin(valda_inriktningar)]
 
-    fig = px.line(df_valda, x='år', y='Antal', color='Inriktning',
-                  title='Trender för populära inriktningar 2015–2024',
+    fig = px.line(df_valda,
+                  x='år',
+                  y='Antal',
+                  color='Inriktning',
+                  title='<b><u>Trender för populära inriktningar 2015–2024</u></b>',
                   labels={'år': 'År', 'Antal': 'Antal sökande'},
                   markers=True)
 
@@ -32,7 +35,19 @@ def create_trend_chart():
             xanchor="left"
         )
 
-    fig.update_layout(margin=dict(r=180), xaxis=dict(tickmode='linear', dtick=1))
+    fig.update_layout(
+        title={
+            'text': '<span style="text-decoration: underline;"><b>Trender för populära inriktningar 2015–2024</b></span>',
+            'x': 0.5,
+            'xanchor': 'center'
+        },
+        title_font=dict(
+            size=24,
+            family='Arial, sans-serif',
+            color='black'
+        )
+    )
+    
     fig.add_annotation(
     xref="paper", yref="paper",
     x=0.04, y=1 ,
