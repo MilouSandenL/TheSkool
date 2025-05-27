@@ -6,6 +6,9 @@ import education_location
 import students_by_field
 import approved_programs
 from trends import create_trend_chart
+from stadsbidrag_dashboard import utbildningar, val_utbildning, utan_moms, med_moms, visa_bidrag
+
+
 
 
 # === Läs in data för KPI ===
@@ -67,7 +70,7 @@ karta_fig = education_location.run_map(selected_year_shared)
 stacked_fig = approved_programs.create_stacked_bar_chart(selected_year_shared)
 
 # === GUI-layout ===
-with tgb.Page() as home:
+with tgb.Page() as Home:
     tgb.navbar()
     with tgb.layout(columns="1fr 8fr 1fr"):
         with tgb.part():  # Vänster marginal
@@ -117,12 +120,35 @@ with tgb.Page() as Kpier_Trender:
         tgb.text("🎯 **Beviljade platser:** {beviljade_platser}  📌 **Sökta platser:** {sökta_platser}  🏫 **Bundna utbildningar:** {sökta_bundna}  🌐 **Distansutbildningar:** {sökta_distans}", mode="md")
         tgb.chart(figure="{trend_chart}")
 
-            
+with tgb.Page() as Bidrag:
+    tgb.navbar()
+    with tgb.part(class_name="card"):
+        tgb.text("# 📊 Statsbidrag och schablonnivåer per utbildning", mode="md")
+        tgb.text(
+            "Statsbidraget utgår från schabloner där bidraget bestäms per studerandeplats i heltidsutbildning som omfattar 40 veckor och 200 yrkeshögskolepoäng (årsplats). - MYH.se",
+            mode="md",
+        )
+        tgb.text("---", mode="md")
+        tgb.selector(value="{val_utbildning}", lov="{utbildningar}", label="🎓 Välj utbildning:", dropdown=True)
+        tgb.button("Visa bidrag", on_action=visa_bidrag)
+        with tgb.part(render="{utan_moms != ''}"):
+            tgb.text("💰 Utan momskompensation: {utan_moms}")
+            tgb.text("💰 Med momskompensation: {med_moms}")
+        tgb.text("Schablonerna ovan gäller utbildningsomgångar med startdatum fr.o.m. 1 juli 2024.", mode="md")            
+
 #pages             
 pages = {
-    "home": home,
-    "Kpier_Trender": Kpier_Trender
+    "Startsida": Home,
+    "KPIer_Trender": Kpier_Trender,
+    "Statsbidrag": Bidrag
 }
+
 # === Start GUI ===
 if __name__ == "__main__":
-    Gui(pages= pages).run(use_reloader=True, dark_mode=False, port=8080)
+   Gui(pages=pages).run(dark_mode=False, use_reloader=True,
+     val_utbildning=val_utbildning,
+     utan_moms=utan_moms,
+     med_moms=med_moms,
+     on_action=visa_bidrag
+)
+
