@@ -18,7 +18,7 @@ def create_trend_chart():
     fig.update_traces(marker=dict(color='black', line=dict(width=0)))
 
     # === Annotationer ===
-    for inriktning, y_offset in zip(valda_inriktningar, [800, -1000, 800]):
+    for inriktning, y_offset in zip(valda_inriktningar, [1600, -1300, 1600]):
         df_inriktn = df_valda[df_valda['Inriktning'] == inriktning]
         start = df_inriktn[df_inriktn['år'] == 2015]['Antal'].values[0]
         end = df_inriktn[df_inriktn['år'] == 2024]['Antal'].values[0]

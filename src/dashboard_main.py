@@ -7,6 +7,7 @@ import students_by_field
 import approved_programs
 from trends import create_trend_chart
 
+
 # === Läs in data för KPI ===
 df = pd.read_excel("data/resultat-ansokningsomgang-2024.xlsx", sheet_name="Tabell 3", skiprows=5)
 df.columns = df.columns.str.strip()
@@ -66,7 +67,8 @@ karta_fig = education_location.run_map(selected_year_shared)
 stacked_fig = approved_programs.create_stacked_bar_chart(selected_year_shared)
 
 # === GUI-layout ===
-with tgb.Page() as page:
+with tgb.Page() as home:
+    tgb.navbar()
     with tgb.layout(columns="1fr 8fr 1fr"):
         with tgb.part():  # Vänster marginal
             pass
@@ -96,24 +98,31 @@ with tgb.Page() as page:
                         tgb.text("### Välj år (2005-2024)", mode="md")
                         tgb.selector(value="{selected_year}", lov=available_years, dropdown=True, on_change=update_chart)
 
-            # --- KPI-sektion ---
-            with tgb.part(class_name="card"):
-                tgb.text("## 🎓 YH-ansökningsomgång 2024", mode="md")
-                tgb.text(
-                    "Här visas nyckelindikatorer för beviljade och sökta YH-utbildningar under ansökningsomgången 2024.  \n"
-                    "Statistiken ger en snabb överblick över beviljandegrad, antal utbildningar och platser samt studieformer.",
-                    mode="md",
-                )
-                tgb.text("---", mode="md")
-                tgb.text("📊 **Beviljandegrad:** {beviljandegrad}%  ✅ **Beviljade utbildningar:** {beviljade_utbildningar}  📝 **Sökta utbildningar:** {sökta_utbildningar}", mode="md")
-                tgb.text("🎯 **Beviljade platser:** {beviljade_platser}  📌 **Sökta platser:** {sökta_platser}  🏫 **Bundna utbildningar:** {sökta_bundna}  🌐 **Distansutbildningar:** {sökta_distans}", mode="md")
-            
-            with tgb.part():
-                tgb.chart(figure="{trend_chart}")
+        with tgb.part():  # Höger marginal
+            pass
+
+
+# === SEPARAT SIDFÖR KPIER & TRENDER ===
+with tgb.Page() as Kpier_Trender:
+    tgb.navbar()
+    with tgb.part(class_name="card"):
+        tgb.text("## 🎓 YH-ansökningsomgång 2024", mode="md")
+        tgb.text(
+            "Här visas nyckelindikatorer för beviljade och sökta YH-utbildningar under ansökningsomgången 2024.  \n"
+            "Statistiken ger en snabb överblick över beviljandegrad, antal utbildningar och platser samt studieformer.",
+            mode="md",
+        )
+        tgb.text("---", mode="md")
+        tgb.text("📊 **Beviljandegrad:** {beviljandegrad}%  ✅ **Beviljade utbildningar:** {beviljade_utbildningar}  📝 **Sökta utbildningar:** {sökta_utbildningar}", mode="md")
+        tgb.text("🎯 **Beviljade platser:** {beviljade_platser}  📌 **Sökta platser:** {sökta_platser}  🏫 **Bundna utbildningar:** {sökta_bundna}  🌐 **Distansutbildningar:** {sökta_distans}", mode="md")
+        tgb.chart(figure="{trend_chart}")
 
             
-             
-
+#pages             
+pages = {
+    "home": home,
+    "Kpier_Trender": Kpier_Trender
+}
 # === Start GUI ===
 if __name__ == "__main__":
-    Gui(page).run(use_reloader=True, dark_mode=False, port=8080)
+    Gui(pages= pages).run(use_reloader=True, dark_mode=False, port=8080)
