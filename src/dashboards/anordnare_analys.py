@@ -2,10 +2,10 @@ import pandas as pd
 import plotly.express as px
 import taipy.gui.builder as tgb
 from taipy.gui import Gui
-from pathlib import Path
 
-data_dir = Path(__file__).parent / "data"
-datafiler = sorted(data_dir.glob("resultat-ansokningsomgang-*.xlsx"))
+from src.config import DATA_DIR
+
+datafiler = sorted(DATA_DIR.glob("resultat-ansokningsomgang-*.xlsx"))
 
 dfs = []
 for fil in datafiler:

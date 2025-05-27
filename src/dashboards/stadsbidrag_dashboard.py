@@ -1,12 +1,11 @@
-
-import os
 import pandas as pd
 import taipy.gui.builder as tgb
+from src.config import DATA_DIR
 
-BASE_DIR = os.path.dirname(__file__)
-CSV_PATH = os.path.join(BASE_DIR, "data", "schablonnivaer.csv")
-
+# --- Läs in CSV från rätt plats ---
+CSV_PATH = DATA_DIR / "schablonnivaer.csv"
 df_bidrag = pd.read_csv(CSV_PATH)
+
 df_bidrag["Utan momskompensation"] = df_bidrag["Utan momskompensation"].astype(str).str.replace(" ", "").astype(int)
 df_bidrag["Med momskompensation"] = df_bidrag["Med momskompensation"].astype(str).str.replace(" ", "").astype(int)
 
@@ -40,4 +39,3 @@ with tgb.Page() as bidrag_page:
         tgb.text("💰 Med momskompensation: {med_moms}")
 
     tgb.text("Schablonerna ovan gäller utbildningsomgångar med startdatum fr.o.m. 1 juli 2024.", mode="md")
-

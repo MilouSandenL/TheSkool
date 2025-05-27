@@ -3,25 +3,26 @@ import pandas as pd
 import plotly.express as px
 import taipy.gui.builder as tgb
 from taipy.gui import Gui
+from src.config import DATA_DIR
 
-# === Läs in data ===
+# --- Läs in data ---
 ansokningar_files = [
-    "data/kursdata/ansokningar-2021.xlsx",
-    "data/kursdata/ansokningar-2023.xlsx",
-    "data/kursdata/ansokningar-2024.xlsx"
+    DATA_DIR / "kursdata" / "ansokningar-2021.xlsx",
+    DATA_DIR / "kursdata" / "ansokningar-2023.xlsx",
+    DATA_DIR / "kursdata" / "ansokningar-2024.xlsx"
 ]
 beviljade_files = [
-    "data/kursdata/Beviljade-kurser-2020-vår.xlsx",
-    "data/kursdata/Beviljade-kurser-2021.xlsx",
-    "data/kursdata/Beviljade-kurser-2022.xlsx",
-    "data/kursdata/Beviljade-kurser-2023.xlsx",
-    "data/kursdata/Beviljade-kurser-2024.xlsx"
+    DATA_DIR / "kursdata" / "Beviljade-kurser-2020-vår.xlsx",
+    DATA_DIR / "kursdata" / "Beviljade-kurser-2021.xlsx",
+    DATA_DIR / "kursdata" / "Beviljade-kurser-2022.xlsx",
+    DATA_DIR / "kursdata" / "Beviljade-kurser-2023.xlsx",
+    DATA_DIR / "kursdata" / "Beviljade-kurser-2024.xlsx"
 ]
 
 ansokningar_df = pd.concat([pd.read_excel(f) for f in ansokningar_files], ignore_index=True)
 beviljade_df = pd.concat([pd.read_excel(f) for f in beviljade_files], ignore_index=True)
 
-# === Förbered ansökningar ===
+# --- Förbered ansökningar ---
 ansokta_kolumner = {
     "Sökt antal  platser 2021": "2021",
     "Sökt antal platser 2022": "2022",
@@ -40,7 +41,7 @@ ansokningar_df = ansokningar_df.groupby("Utbildningsnamn").sum(numeric_only=True
 ansokta_long = ansokningar_df.melt(id_vars="Utbildningsnamn", var_name="År", value_name="Platser")
 ansokta_long["Typ"] = "Ansökta"
 
-# === Förbered beviljade ===
+# --- Förbered beviljade ---
 beviljade_kolumner = {
     "Antal beviljade platser 2020": "2020",
     "Antal beviljade platser 2021": "2021",
@@ -75,7 +76,7 @@ beviljade_df = beviljade_df.groupby("Utbildningsnamn").sum(numeric_only=True).re
 beviljade_long = beviljade_df.melt(id_vars="Utbildningsnamn", var_name="År", value_name="Platser")
 beviljade_long["Typ"] = "Beviljade"
 
-# === Kombinera och fyll i saknade år ===
+# --- Kombinera och fyll i saknade år ---
 combined_df = pd.concat([ansokta_long, beviljade_long], ignore_index=True)
 combined_df["Platser"] = combined_df["Platser"].fillna(0)
 
@@ -87,7 +88,7 @@ ALL_KURSER = combined_df["Utbildningsnamn"].unique()
 full_index = pd.MultiIndex.from_product([ALL_KURSER, ALL_YEARS, ALL_TYPES], names=["Utbildningsnamn", "År", "Typ"])
 combined_df = combined_df.set_index(["Utbildningsnamn", "År", "Typ"]).reindex(full_index, fill_value=0).reset_index()
 
-# === GUI ===
+# --- GUI ---
 # Beräkna total antal platser per kurs (summan av alla år och typer)
 kurstotaler = combined_df.groupby("Utbildningsnamn")["Platser"].sum()
 
@@ -117,7 +118,6 @@ def update_chart(state):
 bar_chart = create_bar_chart(selected_course)
 
 # --- Funktion som returnerar en Page ---
-
 def get_course_page():
     def on_course_change(state, _, var_value):
         state.bar_chart = create_bar_chart(var_value)

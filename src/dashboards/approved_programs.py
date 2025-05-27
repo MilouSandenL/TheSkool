@@ -1,9 +1,9 @@
-from pathlib import Path
 import pandas as pd
 import plotly.express as px
 
-data_dir = Path(__file__).parent / "data"
-datafiler = sorted(data_dir.glob("resultat-ansokningsomgang-*.xlsx"))
+from src.config import DATA_DIR
+
+datafiler = sorted(DATA_DIR.glob("resultat-ansokningsomgang-*.xlsx"))
 
 dfs = []
 for fil in datafiler:

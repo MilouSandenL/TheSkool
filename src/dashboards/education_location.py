@@ -1,13 +1,12 @@
-from pathlib import Path
 import pandas as pd
 import json
 from difflib import get_close_matches
 import numpy as np
 import plotly.graph_objects as go
 
-# --- LADDA DATA EN GÅNG ---
-data_dir = Path(__file__).parent / "data"
-datafiler = sorted(data_dir.glob("resultat-ansokningsomgang-*.xlsx"))
+from src.config import DATA_DIR, PROJECT_ROOT
+
+datafiler = sorted(DATA_DIR.glob("resultat-ansokningsomgang-*.xlsx"))
 
 def prepare_data():
     dfs = []
@@ -44,7 +43,8 @@ available_years = sorted(_full_data["År"].unique().tolist())
 selected_year = available_years[-1]
 
 # Ladda geojson och regionkoder EN gång
-with open("assets/swedish_regions.geojson", "r", encoding="utf-8") as file:
+geojson_path = PROJECT_ROOT / "src" / "assets" / "swedish_regions.geojson"
+with open(geojson_path, "r", encoding="utf-8") as file:
     GEOJSON_DATA = json.load(file)
 
 PROPERTIES = [f["properties"] for f in GEOJSON_DATA["features"]]
