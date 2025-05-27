@@ -7,6 +7,10 @@ import students_by_field
 import approved_programs
 from trends import create_trend_chart
 from stadsbidrag_dashboard import utbildningar, val_utbildning, utan_moms, med_moms, visa_bidrag
+from course_chart import available_courses, selected_course, bar_chart, update_chart
+
+
+
 
 
 
@@ -61,7 +65,7 @@ selected_year = students_by_field.selected_year
 line_chart = students_by_field.create_horizontal_bar_chart(selected_year)
 chart_title = f"🎓 Antal studerande per utbildningsområde för år {selected_year}"
 
-def update_chart(state):
+def update_students_chart(state):
     state.line_chart = students_by_field.create_horizontal_bar_chart(state.selected_year)
     state.chart_title = f"🎓 Antal studerande per utbildningsområde för år {state.selected_year}"
 
@@ -134,21 +138,44 @@ with tgb.Page() as Bidrag:
         with tgb.part(render="{utan_moms != ''}"):
             tgb.text("💰 Utan momskompensation: {utan_moms}")
             tgb.text("💰 Med momskompensation: {med_moms}")
-        tgb.text("Schablonerna ovan gäller utbildningsomgångar med startdatum fr.o.m. 1 juli 2024.", mode="md")            
+        tgb.text("Schablonerna ovan gäller utbildningsomgångar med startdatum fr.o.m. 1 juli 2024.", mode="md")   
+        
+with tgb.Page(name="Kurser") as Courses:
+    tgb.navbar()
+    with tgb.part(class_name="card"):
+            tgb.text("# 📚 Kurser och utbildningar", mode="md")
+            tgb.text("### Ansökta och beviljade platser 2020-2025", mode="md")
+            with tgb.layout(columns="2 1"):
+                with tgb.part(class_name="card"):
+                    tgb.chart(figure="{bar_chart}")
+                with tgb.part(class_name="card"):
+                    tgb.selector(value="{selected_course}", lov=available_courses, dropdown=True)
+                    tgb.button("UPPDATERA", on_action=update_chart)
+
+# --- Initiera initial state ---
+
+selected_course = available_courses[0]
+
+
 
 #pages             
 pages = {
     "Startsida": Home,
     "KPIer_Trender": Kpier_Trender,
-    "Statsbidrag": Bidrag
+    "Statsbidrag": Bidrag,
+    "Kurser": Courses
 }
 
 # === Start GUI ===
 if __name__ == "__main__":
-   Gui(pages=pages).run(dark_mode=False, use_reloader=True,
-     val_utbildning=val_utbildning,
-     utan_moms=utan_moms,
-     med_moms=med_moms,
-     on_action=visa_bidrag
-)
-
+    Gui(pages=pages).run(
+        dark_mode=False,
+        use_reloader=True,
+        val_utbildning=val_utbildning,
+        utan_moms=utan_moms,
+        med_moms=med_moms,
+        available_courses=available_courses,
+        selected_course=selected_course,
+        bar_chart=None,  
+        on_action=visa_bidrag,
+    )

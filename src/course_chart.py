@@ -1,3 +1,4 @@
+
 import pandas as pd
 import plotly.express as px
 import taipy.gui.builder as tgb
@@ -87,15 +88,13 @@ full_index = pd.MultiIndex.from_product([ALL_KURSER, ALL_YEARS, ALL_TYPES], name
 combined_df = combined_df.set_index(["Utbildningsnamn", "År", "Typ"]).reindex(full_index, fill_value=0).reset_index()
 
 # === GUI ===
-# Filtrera bort kurser som har 0 totalt över alla år och typer
+# Beräkna total antal platser per kurs (summan av alla år och typer)
 kurstotaler = combined_df.groupby("Utbildningsnamn")["Platser"].sum()
-kurser_med_data = kurstotaler[kurstotaler > 0].index.tolist()
 
-# Filtrera datan också så att vi inte visar "tomma" kurser
-combined_df = combined_df[combined_df["Utbildningsnamn"].isin(kurser_med_data)]
+# Hämta top 50 kurser baserat på total antal platser
+top_50_kurser = kurstotaler.sort_values(ascending=False).head(50).index.tolist()
 
-available_courses = sorted(kurser_med_data)
-
+available_courses = sorted(top_50_kurser)
 selected_course = available_courses[0]
 
 def create_bar_chart(course_name):
@@ -106,7 +105,7 @@ def create_bar_chart(course_name):
         y="Platser",
         color="Typ",
         barmode="group",
-        title=f"Ansökta vs Beviljade platser för kurs: {course_name}",
+        title=f"Kurs: <b>{course_name}</b>",
         labels={"Platser": "Antal platser"},
         category_orders={"År": ALL_YEARS}
     )
@@ -117,15 +116,23 @@ def update_chart(state):
 
 bar_chart = create_bar_chart(selected_course)
 
-with tgb.Page() as page:
-    with tgb.part(class_name="container card"):
-        tgb.text("# Ansökta vs Beviljade platser per kurs", mode="md")
-        with tgb.layout(columns="2 1"):
-            with tgb.part(class_name="card"):
-                tgb.chart(figure="{bar_chart}")
-            with tgb.part(class_name="card"):
-                tgb.selector(value="{selected_course}", lov=available_courses, dropdown=True)
-                tgb.button("UPPDATERA", on_action=update_chart)
+# --- Funktion som returnerar en Page ---
 
-if __name__ == "__main__":
-    Gui(page).run(dark_mode=False, use_reloader=True)
+def get_course_page():
+    def on_course_change(state, _, var_value):
+        state.bar_chart = create_bar_chart(var_value)
+
+    # Skapa initialt diagram för första kursen
+    bar_chart = create_bar_chart(selected_course)
+
+    with tgb.Page(name="Kurser") as page:
+        with tgb.part(class_name="container card"):
+            tgb.text("# 📚 Kurser och utbildningar", mode="md")
+            tgb.text("### Ansökta och beviljade platser 2020-2025", mode="md")
+            with tgb.layout(columns="2 1"):
+                with tgb.part(class_name="card"):
+                    tgb.chart(figure="{bar_chart}")
+                with tgb.part(class_name="card"):
+                    # Dropdown som triggar on_course_change automatiskt vid ändring
+                    tgb.selector(value="{selected_course}", lov=available_courses, dropdown=True, on_change=on_course_change)
+    return page
