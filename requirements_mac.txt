@@ -6,11 +6,13 @@ arrow==1.3.0
 asttokens==3.0.0
 attrs==25.3.0
 automat==25.4.16
+beautifulsoup4==4.13.4
 bidict==0.23.1
 binaryornot==0.4.4
 blinker==1.9.0
 boto3==1.34.113
 botocore==1.34.162
+bs4==0.0.2
 certifi==2025.4.26
 chardet==5.2.0
 charset-normalizer==3.3.2
@@ -24,8 +26,10 @@ debugpy==1.8.14
 decorator==5.2.1
 deepdiff==7.0.1
 dnspython==2.7.0
+duckdb==1.3.0
 et-xmlfile==2.0.0
 executing==2.2.0
+fastjsonschema==2.21.1
 flask==3.1.0
 flask-cors==5.0.1
 flask-restful==0.3.10
@@ -46,6 +50,8 @@ itsdangerous==2.2.0
 jedi==0.19.2
 jinja2==3.1.6
 jmespath==1.0.1
+jsonschema==4.24.0
+jsonschema-specifications==2025.4.1
 jupyter-client==8.6.3
 jupyter-core==5.7.2
 kiwisolver==1.4.8
@@ -58,6 +64,7 @@ matplotlib==3.10.3
 matplotlib-inline==0.1.7
 mdurl==0.1.2
 narwhals==1.39.0
+nbformat==5.10.4
 nest-asyncio==1.6.0
 networkx==3.3
 numpy==2.2.5
@@ -88,12 +95,15 @@ python-socketio==5.13.0
 pytz==2024.1
 pyyaml==6.0.2
 pyzmq==26.4.0
+referencing==0.36.2
 requests==2.32.3
 rich==14.0.0
+rpds-py==0.25.1
 s3transfer==0.10.4
 setuptools==80.4.0
 simple-websocket==1.0.0
 six==1.17.0
+soupsieve==2.7
 sqlalchemy==2.0.30
 stack-data==0.6.3
 taipy==4.0.3
@@ -118,5 +128,3 @@ werkzeug==3.1.3
 wsproto==1.2.0
 zope-event==5.0
 zope-interface==7.2
-duckdb
-nbformat
