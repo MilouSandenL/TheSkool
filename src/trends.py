@@ -100,6 +100,21 @@ def create_trend_chart():
         )
 
     fig.update_layout(margin=dict(r=180), xaxis=dict(tickmode='linear', dtick=1))
+    fig.add_annotation(
+    xref="paper", yref="paper",
+    x=0.04, y=0.8,
+    text=(
+        "Trots att <b>Ekonomi, administration och försäljning</b><br> har flest sökande totalt sett,<br>"
+        "är det <b>Data/IT</b> som vuxit mest i procent sedan 2015."
+    ),
+    showarrow=False,
+    font=dict(size=14, color="black"),
+    align="left",
+    bordercolor="black",
+    borderwidth=1,
+    borderpad=8,
+    bgcolor="lightyellow",
+)
     
     return fig
 
