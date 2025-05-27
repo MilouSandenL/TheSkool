@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
-import os
+from src.config import DATA_DIR
 
 url = "https://www.myh.se/yrkeshogskolan/ansok-om-att-bedriva-utbildning/ansokan-kurser/statsbidrag-och-schablonnivaer"
 response = requests.get(url)
@@ -17,9 +17,8 @@ for row in rows[1:]:
 
 df = pd.DataFrame(data, columns=["Utbildningsområde", "Utan momskompensation", "Med momskompensation"])
 
-script_dir = os.path.dirname(__file__)
-output_path = os.path.join(script_dir, "data", "schablonnivaer.csv")
-
+# ✅ Spara till korrekt plats
+output_path = DATA_DIR / "schablonnivaer.csv"
 df.to_csv(output_path, index=False)
 
 print(df)

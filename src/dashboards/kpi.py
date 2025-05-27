@@ -2,11 +2,13 @@ import pandas as pd
 from taipy.gui import Gui
 import taipy.gui.builder as tgb
 
-# === Läs in data ===
-df = pd.read_excel("data/resultat-ansokningsomgang-2024.xlsx", sheet_name="Tabell 3", skiprows=5)
+from src.config import DATA_DIR
+
+# --- Läs in data ---
+df = pd.read_excel(DATA_DIR / "resultat-ansokningsomgang-2024.xlsx", sheet_name="Tabell 3", skiprows=5)
 df.columns = df.columns.str.strip()
 
-# === KPI-variabler ===
+# --- KPI-variabler ---
 def calc_kpis():
     total_ansökningar = df.shape[0]
     beviljade = df[df["Beslut"] == "Beviljad"]
@@ -32,7 +34,7 @@ def uppdatera_kpi(state):
         state.sökta_distans,
     ) = calc_kpis()
 
-# === GUI ===
+# --- GUI ---
 with tgb.Page(on_init=uppdatera_kpi) as page:
     tgb.text("## 🎓 YH-ansökningsomgång 2024", mode="md")
     tgb.text(
@@ -45,6 +47,6 @@ with tgb.Page(on_init=uppdatera_kpi) as page:
     tgb.text("📊 **Beviljandegrad:** {beviljandegrad}%  ✅ **Beviljade utbildningar:** {beviljade_utbildningar}  📝 **Sökta utbildningar:** {sökta_utbildningar}", mode="md")
     tgb.text("🎯 **Beviljade platser:** {beviljade_platser}  📌 **Sökta platser:** {sökta_platser}  🏫 **Bundna utbildningar:** {sökta_bundna}  🌐 **Distansutbildningar:** {sökta_distans}", mode="md")
 
-# === Starta GUI ===
+# --- Starta GUI ---
 if __name__ == "__main__":
     Gui(page).run(use_reloader=True, dark_mode=False)

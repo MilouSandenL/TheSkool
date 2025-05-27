@@ -1,10 +1,9 @@
 import pandas as pd
 import plotly.express as px
-import taipy.gui.builder as tgb
-from taipy.gui import Gui
+from src.config import DATA_DIR
 
 
-df = pd.read_csv("data/studerande_ren.csv")
+df = pd.read_csv(DATA_DIR / "studerande_ren.csv")
 
 df_long = df.melt(id_vars=["År"], var_name="Utbildningsområde", value_name="Antal")
 

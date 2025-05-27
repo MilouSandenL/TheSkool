@@ -4,9 +4,10 @@ import json
 from difflib import get_close_matches
 import numpy as np 
 import plotly.graph_objects as go
+from src.config import DATA_DIR, PROJECT_ROOT
 
 def run_map():
-    df = pd.read_excel("data/resultat-ansokningsomgang-2024.xlsx", sheet_name="Tabell 3", skiprows=5)
+    df = pd.read_excel(DATA_DIR / "resultat-ansokningsomgang-2024.xlsx", sheet_name="Tabell 3", skiprows=5)
 
     decisions = df["Beslut"].value_counts()
     approved, total = decisions.get("Beviljad", 0), decisions.sum()
@@ -25,7 +26,8 @@ def run_map():
         """
     ).df()
 
-    with open("assets/swedish_regions.geojson", "r", encoding="utf-8") as file:
+    geojson_path = PROJECT_ROOT / "src" / "assets" / "swedish_regions.geojson"
+    with open(geojson_path, "r", encoding="utf-8") as file:
         json_data = json.load(file)
 
     properties = [feature.get("properties") for feature in json_data.get("features")]
@@ -91,4 +93,4 @@ def run_map():
     )
 
 
-fig.show()
+    return fig
