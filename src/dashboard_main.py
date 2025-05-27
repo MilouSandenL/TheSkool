@@ -5,7 +5,7 @@ from taipy.gui import Gui
 import education_location
 import students_by_field
 import approved_programs
-
+from trends import create_trend_chart
 
 # === Läs in data för KPI ===
 df = pd.read_excel("data/resultat-ansokningsomgang-2024.xlsx", sheet_name="Tabell 3", skiprows=5)
@@ -36,6 +36,9 @@ def uppdatera_kpi(state):
         state.sökta_bundna,
         state.sökta_distans,
     ) = calc_kpis()
+    
+#Trends
+trend_chart = create_trend_chart()    
 
 
 # --- SHARED YEAR (för karta och stapeldiagram) ---
@@ -104,9 +107,12 @@ with tgb.Page() as page:
                 tgb.text("---", mode="md")
                 tgb.text("📊 **Beviljandegrad:** {beviljandegrad}%  ✅ **Beviljade utbildningar:** {beviljade_utbildningar}  📝 **Sökta utbildningar:** {sökta_utbildningar}", mode="md")
                 tgb.text("🎯 **Beviljade platser:** {beviljade_platser}  📌 **Sökta platser:** {sökta_platser}  🏫 **Bundna utbildningar:** {sökta_bundna}  🌐 **Distansutbildningar:** {sökta_distans}", mode="md")
+            
+            with tgb.part():
+                tgb.chart(figure="{trend_chart}")
 
-        with tgb.part():  # Höger marginal
-            pass
+            
+             
 
 # === Start GUI ===
 if __name__ == "__main__":
