@@ -118,8 +118,9 @@ def run_map(year):
         margin=dict(r=0, t=50, l=0, b=0),
         title=dict(
                 text=f"""
-    <b>Beviljade YH-utbildningar {year}</b>
-    <br>Totalt godkändes <b>{approved}</b> av <b>{total}</b> ansökningar
+    <b>Beviljade YH-utbildningar {year}</b><br>
+    <br>Totalt godkändes <b>{approved}</b> av <b>{total}</b><br>ansökningar
+    <br>
     <br>Beviljandegrad: <b>{approval_rate:.0f}%</b>
     """,
             x=0.06,
