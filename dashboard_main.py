@@ -104,13 +104,13 @@ with tgb.Page(name="Startsida") as Home:
 
             # --- STATSBIDRAG ---
             with tgb.part(class_name="card"):
-                tgb.text("# 📊 Statsbidrag och schablonnivåer per utbildningsområde", mode="md")
+                tgb.text("## 📊 Statsbidrag och schablonnivåer per utbildningsområde", mode="md")
                 tgb.text(
                     "Statsbidraget utgår från schabloner där bidraget bestäms per studerandeplats i heltidsutbildning som omfattar 40 veckor och 200 yrkeshögskolepoäng (årsplats). - MYH.se",
                     mode="md",
                 )
                 tgb.selector(value="{val_utbildning}", lov="{utbildningar}", label="🎓 Välj utbildningområde:", dropdown=True)
-                tgb.button("Visa bidrag", on_action=visa_bidrag)
+                tgb.button("Visa bidrag", on_action=visa_bidrag,)
 
                 with tgb.part(render="{utan_moms != ''}"):
                     tgb.text("💰 Utan momskompensation: {utan_moms}")
@@ -119,6 +119,7 @@ with tgb.Page(name="Startsida") as Home:
                 tgb.text("Schablonerna ovan gäller utbildningsomgångar med startdatum fr.o.m. 1 juli 2024.", mode="md")
         
             with tgb.part(style="margin-top: 160px;"):
+                tgb.text("## 📈 Trender för populära inriktningar 2015–2024", mode="md")
                 tgb.chart(figure="{trend_chart}")
 
         with tgb.part(): pass
@@ -216,6 +217,9 @@ with tgb.Page(name="Utbildningsanordnare") as Anordnaranalys:
                             dropdown=True,
                             on_change=anordnare_analys.update_chart_anordnare
                         )
+                        tgb.text("**Denna visualisering visar hur antalet beviljade och ej beviljade utbildningar har utvecklats över tid för varje utbildningsanordnare.\
+                                 Genom att följa trenderna kan vi se vilka anordnare som får mest stöd och vilka som har större utmaningar att få sina utbildningar godkända.\
+                                Informationen ger värdefulla insikter för att förstå styrkor och svagheter i utbildningsutbudet och stödja framtida beslut.**",mode="md")
 
         with tgb.part(): pass
 

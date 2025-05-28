@@ -20,7 +20,7 @@ def create_trend_chart():
         x="år",
         y="Antal",
         color="Inriktning",
-        title="<b><u>Trender för populära inriktningar 2015–2024</u></b>",
+        title=None,
         labels={"år": "År", "Antal": "Antal sökande"},
         markers=True,
     )
@@ -42,20 +42,13 @@ def create_trend_chart():
             xanchor="left",
         )
 
-    fig.update_layout(
-        title={
-            "text": '<span style="text-decoration: underline;"><b>Trender för populära inriktningar 2015–2024</b></span>',
-            "x": 0.5,
-            "xanchor": "center",
-        },
-        title_font=dict(size=24, family="Arial, sans-serif", color="black"),
-    )
+
 
     fig.add_annotation(
         xref="paper",
         yref="paper",
-        x=0.04,
-        y=1,
+        x=0.08,
+        y=1.1,
         text=(
             "Trots att <b>Ekonomi, administration<br>och försäljning</b><br> har flest sökande totalt sett,<br>"
             "är det <b>Data/IT</b> som<br>vuxit mest i procent sedan 2015."
