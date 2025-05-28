@@ -136,14 +136,21 @@ with tgb.Page(name="Utbildningsstatistik") as Utbildningsstatistik:
             with tgb.part(class_name="card"):
                 with tgb.layout(columns="3 1"):
                     with tgb.part():
+                        
                         tgb.text("## 🗺️ Beviljade utbildningar per län för år {selected_year_shared}", mode="md")
                         tgb.chart(figure="{karta_fig}")
                         tgb.text("---", mode="md")
                         tgb.text("## 📈 Beviljade och avslagna program per utbildningsområde för år {selected_year_shared}", mode="md")
                         tgb.chart(figure="{stacked_fig}")
+                        
                     with tgb.part():
                         tgb.text("### Välj år (2020-2024)", mode="md")
                         tgb.selector(value="{selected_year_shared}", lov=available_years_shared, dropdown=True, on_change=update_shared_year)
+                        tgb.text("**Här ser vi en geografisk fördelning av de beviljade YH-utbildningarna i Sverige under 2020-2024.  \n"
+         "Kartan hjälper oss förstå vilka län som fått störst satsningar och vilka som halkar efter.**  \n\n"
+         "**Färgschemat visar prestanda där rött indikerar låga värden och grönt indikerar höga värden.**",
+         mode="md")
+
 
             # --- STUDENTER PER UTBILDNINGSOMRÅDE ---
             with tgb.part(class_name="card"):
@@ -155,6 +162,10 @@ with tgb.Page(name="Utbildningsstatistik") as Utbildningsstatistik:
                     with tgb.part():
                         tgb.text("### Välj år (2005-2024)", mode="md")
                         tgb.selector(value="{selected_year}", lov=available_years, dropdown=True, on_change=update_students_chart)
+                        tgb.text("**Diagrammet visar antalet studerande inom varje utbildningsområde under åren 2005-2024.\
+                                 Denna information ger insikt i utbildningsintresse och efterfrågan inom olika sektorer.\
+                                 Genom att analysera dessa siffror kan vi identifiera vilka områden som växer och vilka som kanske behöver mer resurser eller marknadsföring.\
+                                 Det hjälper även utbildningsanordnare att planera kapacitet och utveckla relevanta utbildningar för framtidens arbetsmarknad.**",mode="md")
 
             # --- KURSER ---
             with tgb.part(class_name="card"):
@@ -166,6 +177,10 @@ with tgb.Page(name="Utbildningsstatistik") as Utbildningsstatistik:
                     with tgb.part():
                         tgb.text("### 🔎 Välj kurs", mode="md")
                         tgb.selector(value="{selected_course}", lov=available_courses, dropdown=True, on_change=update_chart)
+                        tgb.text("**Diagrammet visar utvecklingen över tid och ger en tydlig bild av efterfrågan och tilldelning för varje utbildning.\
+                        Det hjälper till att identifiera trender inom olika utbildningsområden samt hur resurser fördelas över åren.\
+                        Endast de 50 mest populära kurserna baserat på totalt antal platser visas i listan för att ge en överskådlig och relevant vy.\
+                        Genom att analysera dessa data kan utbildningsanordnare och beslutsfattare fatta mer informerade beslut kring kapacitet och framtida satsningar.**", mode="md") 
 
         with tgb.part(): pass
 
