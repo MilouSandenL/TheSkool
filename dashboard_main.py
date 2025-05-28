@@ -45,7 +45,15 @@ def uppdatera_kpi(state):
         state.sökta_bundna,
         state.sökta_distans,
     ) = calc_kpis()
-    
+# länkar    
+myh_program = "https://www.myh.se/yrkeshogskolan/resultat-ansokningsomgangar/resultat-for-program"   
+myh_kurser = "https://www.myh.se/yrkeshogskolan/resultat-ansokningsomgangar/resultat-for-kurser"  
+myh_bidrag = "https://www.myh.se/yrkeshogskolan/ansok-om-att-bedriva-utbildning/ansokan-kurser/statsbidrag-och-schablonnivaer"
+myh_statliga_medel = "https://www.myh.se/statistik/yrkeshogskoleutbildningar/statistik-program/utbetalda-statliga-medel"
+scb_yh = "https://www.scb.se/UF0701"
+scb_marknad ="https://www.scb.se/hitta-statistik/statistik-efter-amne/utbildning-samt-forskning-inom-hogskolan/befolkningens-utbildning-och-studiedeltagande/intradet-pa-arbetsmarknaden/"
+
+
 
 trend_chart = create_trend_chart()    
 
@@ -194,8 +202,7 @@ with tgb.Page(name="Utbildningsanordnare") as Anordnaranalys:
             tgb.text("# The Skool - YH Dashboard", mode="md")
             tgb.navbar()
             with tgb.part(class_name="card"):
-                tgb.text("# 🧑‍🏫 Analys per Utbildningsanordnare", mode="md")
-
+                
                 with tgb.layout(columns="3 1"):
                     with tgb.part():
                         tgb.text("## 📊 Beviljade och ej beviljade utbildningar per år", mode="md")
@@ -222,16 +229,42 @@ with tgb.Page(name="Utbildningsanordnare") as Anordnaranalys:
                                 Informationen ger värdefulla insikter för att förstå styrkor och svagheter i utbildningsutbudet och stödja framtida beslut.**",mode="md")
 
         with tgb.part(): pass
-
-# --- Initiera initial state ---
+        
+with tgb.Page() as länkar:
+    with tgb.layout(columns="1fr 8fr 1fr"):
+        with tgb.part(): pass
+        
+        with tgb.part():
+                tgb.text("# The Skool - YH Dashboard", mode="md")
+                tgb.navbar()
+                
+                with tgb.part(class_name="card"):
+                    
+                    with tgb.layout(columns="3 1"):
+                       
+                        with tgb.part():
+                            tgb.text("## 📚 Länkar och resurser", mode="md")
+                            tgb.text("Här är några användbara länkar för att utforska mer om YH-utbildningar och statistik:", mode="md")
+                            
+                            tgb.text(f"- [Resultat ansökningsomgång program]({myh_program})", mode="md")
+                            tgb.text(f"- [Resultat ansökningsomgång kurser]({myh_kurser})", mode="md")
+                            tgb.text(f"- [Statsbidrag och schablonsnivåer]({myh_bidrag})", mode="md")
+                            tgb.text(f"- [Utbetalda statliga medel]({myh_statliga_medel})", mode="md")
+                            tgb.text(f"- [Yrkeshögskolan - SCB]({scb_yh})", mode="md")
+                            tgb.text(f"- [Inträdet på arbetsmarknaden - SCB]({scb_marknad})", mode="md")
+                            
+                        
+        with tgb.part(): pass
+    # --- Initiera initial state ---
 selected_course = available_courses[0]
 
-# --- Pages ---            
+    # --- Pages ---            
 pages = {
-    "Startsida": Home,
-    "Utbildningsstatistik": Utbildningsstatistik,
-    "Utbildningsanordnare": Anordnaranalys
-}
+        "Startsida": Home,
+        "Utbildningsstatistik": Utbildningsstatistik,
+        "Utbildningsanordnare": Anordnaranalys,
+        "Resurser": länkar
+    }
 
 # --- Start GUI ---
 if __name__ == "__main__":
